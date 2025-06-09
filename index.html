@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Peta Gresik Interaktif</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    #map { height: 100vh; }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([-7.16, 112.65], 11); // Gresik
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  fetch('gresik.geojson')
+    .then(response => response.json())
+    .then(data => {
+      L.geoJSON(data, {
+        style: {
+          color: "#3388ff",
+          weight: 2,
+          fillOpacity: 0.3
+        },
+        onEachFeature: function (feature, layer) {
+          if (feature.properties) {
+            let popup = "<b>Info:</b><br>";
+            for (let key in feature.properties) {
+              popup += `${key}: ${feature.properties[key]}<br>`;
+            }
+            layer.bindPopup(popup);
+          }
+        }
+      }).addTo(map);
+    });
+</script>
+
+</body>
+</html>
